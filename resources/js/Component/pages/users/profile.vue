@@ -34,7 +34,7 @@
   <div class="card-body box-profile">
     <div class="text-center">
       <img class="profile-user-img img-fluid img-circle"
-           src="../../dist/img/user4-128x128.jpg"
+           src=""
            alt="User profile picture">
     </div>
 
@@ -63,60 +63,66 @@
 <!-- /.card -->
 </div>
 <!-- /.col -->
-<div class="col-md-9">
-<div class="card">
-  <div class="card-header p-2">
-    <ul class="nav nav-pills">
-    
-      <li class="nav-item"><a class="nav-link active" href="#!" data-toggle="tab">Settings</a></li>
-    </ul>
-  </div><!-- /.card-header -->
-  <div class="card-body">
-    <div class="tab-content">
-    
+            <div class="col-md-9">
+            <div class="card">
+            <div class="card-header p-2">
+                <ul class="nav nav-pills">
+                
+                <li class="nav-item"><a class="nav-link active" href="#!" data-toggle="tab">Settings</a></li>
+                </ul>
+            </div><!-- /.card-header -->
+            <div class="card-body">
+                <div class="tab-content">
+                
 
-      <div class="tab-pane active" id="settings">
-        <form class="form-horizontal">
-          <div class="form-group row">
-            <label for="inputName" class="col-sm-2 col-form-label">Name</label>
-            <div class="col-sm-10">
-              <input type="email" class="form-control" id="inputName" value="" placeholder="Name">
+                <div class="tab-pane active" id="settings">
+                    <form class="form-horizontal"  @submit.prevent="updateProfile" novalidate>
+                    <div class="form-group row">
+                        <label for="inputName" class="col-sm-2 col-form-label">Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputName" :value="user ? user.name : 'Loading...'" placeholder="Name">
+                            <input type="hidden" class="form-control"  :value="user ? user.id : 'Loading...'" >
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-10">
+                        <input type="email" class="form-control" id="inputEmail" :value="user ? user.email : 'Loading...'"  placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="inputName2" class="col-sm-2 col-form-label">Phone Number</label>
+                        <div class="col-sm-10">
+                        <input type="text"   class="form-control"  :value="user ? user.phone_number : 'Loading...'"  :placeholder="user ? 'Phone Number' : 'Loading...'">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="inputExperience" class="col-sm-2 col-form-label">Country</label>
+                        <div class="col-sm-10">
+                            <select name="country" id="country" v-model="country" class="form-control">
+                                <option disabled selected>Select</option>
+                                <option value="Pakistan">Pakistan</option>
+                                <option value="India">India</option>
+                                <option value="China">China</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                
+                    <div class="form-group row">
+                        <div class="offset-sm-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+                <!-- /.tab-pane -->
+                </div>
+                <!-- /.tab-content -->
+            </div><!-- /.card-body -->
             </div>
-          </div>
-          <div class="form-group row">
-            <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
-            <div class="col-sm-10">
-              <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+            <!-- /.card -->
             </div>
-          </div>
-          <div class="form-group row">
-            <label for="inputName2" class="col-sm-2 col-form-label">Phone Number</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputName2" placeholder="Name">
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="inputExperience" class="col-sm-2 col-form-label">Country</label>
-            <div class="col-sm-10">
-              <textarea class="form-control" id="inputExperience" placeholder="Experience"></textarea>
-            </div>
-          </div>
-         
-       
-          <div class="form-group row">
-            <div class="offset-sm-2 col-sm-10">
-              <button type="submit" class="btn btn-primary">Update</button>
-            </div>
-          </div>
-        </form>
-      </div>
-      <!-- /.tab-pane -->
-    </div>
-    <!-- /.tab-content -->
-  </div><!-- /.card-body -->
-</div>
-<!-- /.card -->
-</div>
              
             </div>
           </div>
@@ -136,15 +142,22 @@
     import Navbar from '../Navbar.vue';
     import Footers from '../Footers.vue';
     export default {
-        name: 'profile',
+    name: 'profile',
         components: {
         Sidebar,
         Navbar,
         Footers,
     
     },
+    data() {
+    return {
+      country: '',
+      phone_number: ''
+    };
+  },
 
-    created() {
+
+  mounted() {
     this.fetchUserData();
   },
 
@@ -152,7 +165,18 @@
         fetchUserData() {
       const userData = localStorage.getItem('userData'); // Retrieve user data from local storage
       if (userData) {
+
+        try {
+        const parsedData = JSON.parse(userData);
+    
+        this.country = parsedData.country;
         this.user = JSON.parse(userData);
+      }catch (error) {
+        console.error('Error parsing user data:', error);
+      }
+
+        // console.log(userData.name);
+       
       }
     },
    
