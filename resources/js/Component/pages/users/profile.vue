@@ -80,20 +80,20 @@
                     <div class="form-group row">
                         <label for="inputName" class="col-sm-2 col-form-label">Name</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="inputName" :value="user ? user.name : 'Loading...'" placeholder="Name">
-                            <input type="hidden" class="form-control"  :value="user ? user.id : 'Loading...'" >
+                            <input type="text" class="form-control" v-model="name"   placeholder="Name">
+                           
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
                         <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail" :value="user ? user.email : 'Loading...'"  placeholder="Email">
+                        <input type="email" class="form-control" v-model="email"     placeholder="Email">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputName2" class="col-sm-2 col-form-label">Phone Number</label>
                         <div class="col-sm-10">
-                        <input type="text"   class="form-control"  :value="user ? user.phone_number : 'Loading...'"  :placeholder="user ? 'Phone Number' : 'Loading...'">
+                         <input type="number"  v-model="phone_number"  class="form-control"    >
                         </div>
                     </div>
                     <div class="form-group row">
@@ -141,6 +141,7 @@
     import Sidebar from '../Sidebar.vue';
     import Navbar from '../Navbar.vue';
     import Footers from '../Footers.vue';
+    import axios from 'axios';
     export default {
     name: 'profile',
         components: {
@@ -170,6 +171,10 @@
         const parsedData = JSON.parse(userData);
     
         this.country = parsedData.country;
+        this.phone_number = parsedData.phone_number;
+        this.name = parsedData.name;
+        this.email = parsedData.email;
+        
         this.user = JSON.parse(userData);
       }catch (error) {
         console.error('Error parsing user data:', error);

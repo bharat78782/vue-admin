@@ -22,3 +22,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/dashboard', [DashboardController::class, 'index']);
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/login', [RegisterController::class, 'login'])->name('login');
+Route::post('/updateProfile', [RegisterController::class, 'updateProfile'])->name('updateProfile');
