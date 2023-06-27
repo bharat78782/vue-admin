@@ -11,7 +11,7 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1>Profile</h1>
+                <h1>Single User</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -27,50 +27,11 @@
         <section class="content">
           <div class="container-fluid">
             <div class="row">
-                <div class="col-md-3">
-
-<!-- Profile Image -->
-<div class="card card-primary card-outline">
-  <div class="card-body box-profile">
-    <div class="text-center">
-      <img class="profile-user-img img-fluid img-circle"
-      :src="profileImageUrl"
-           alt="User profile picture">
-    </div>
-
-    <h3 class="profile-username text-center">{{ user ? user.name : 'Loading...' }}</h3>
-
-    <p class="text-muted text-center">Software Engineer</p>
-
-    <ul class="list-group list-group-unbordered mb-3">
-      <li class="list-group-item">
-        <b>Email</b> <a class="float-right">{{ user ? user.email : 'Loading...' }}</a>
-      </li>
-      <li class="list-group-item">
-        <b>Phone</b> <a class="float-right">{{ user ? user.phone_number : 'N/A' }}</a>
-      </li>
-     
-    </ul>
-
-    
-  </div>
-  <!-- /.card-body -->
-</div>
-<!-- /.card -->
-
-<!-- About Me Box -->
-
-<!-- /.card -->
-</div>
-<!-- /.col -->
-            <div class="col-md-9">
-            <div class="card">
-            <div class="card-header p-2">
-                <ul class="nav nav-pills">
                 
-                <li class="nav-item"><a class="nav-link active" href="#!" data-toggle="tab">Settings</a></li>
-                </ul>
-            </div><!-- /.card-header -->
+<!-- /.col -->
+            <div class="col-md-12">
+            <div class="card">
+          
             <div class="card-body">
                 <div class="tab-content">
                 
@@ -80,26 +41,26 @@
                     <div class="form-group row">
                         <label for="inputName" class="col-sm-2 col-form-label">Name</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" v-model="name"   placeholder="Name">
+                            <input type="text" class="form-control" v-model="name"   placeholder="Name" readonly>
                            
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
                         <div class="col-sm-10">
-                        <input type="email" class="form-control" v-model="email"     placeholder="Email">
+                        <input type="email" class="form-control" v-model="email"     placeholder="Email" readonly>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputName2" class="col-sm-2 col-form-label">Phone Number</label>
                         <div class="col-sm-10">
-                         <input type="number"  v-model="phone_number"  class="form-control"    >
+                         <input type="number"  v-model="phone_number"  class="form-control"    readonly >
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputExperience" class="col-sm-2 col-form-label">Country</label>
                         <div class="col-sm-10">
-                            <select name="country" id="country" v-model="country" class="form-control">
+                            <select name="country" id="country" v-model="country" class="form-control" readonly>
                                 <option disabled selected>Select</option>
                                 <option value="Pakistan">Pakistan</option>
                                 <option value="India">India</option>
@@ -107,20 +68,16 @@
                             </select>
                         </div>
                     </div>
+
                     <div class="form-group row">
-                      <label for="inputExperience" class="col-sm-2 col-form-label">Profile</label>
-                      <div class="col-sm-10">
-                        <input type="file" class="form-control" @change="handleProfilePictureChange">
-                      </div>  
-                  </div>
-                    
-                
-                    <div class="form-group row">
-                        <div class="offset-sm-2 col-sm-10">
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <label for="inputName2" class="col-sm-2 col-form-label">Profile</label>
+                        <div class="col-sm-10">
+                            <img :src="baseUrl + '/documents/profile/' + (profile ? profile : 'default-profile.png')" class="profile-user-img img-fluid img-circle" alt="User profile picture">
+
                         </div>
                     </div>
-                    </form>
+
+                 </form>
                 </div>
                 <!-- /.tab-pane -->
                 </div>
@@ -148,8 +105,8 @@
     import Navbar from '../Navbar.vue';
     import Footers from '../Footers.vue';
     import axios from 'axios';
-    import toastr from 'toastr';
-    import 'admin-lte/plugins/toastr/toastr.css';
+  
+    
     export default {
     name: 'profile',
         components: {
@@ -164,8 +121,11 @@
       phone_number: '',
       profileImage: null,
       profileImageUrl: '',
+      baseUrl: 'http://localhost/vuejs3/vue-admin/public/',
     };
   },
+
+
 
 
     mounted() {
@@ -173,54 +133,32 @@
     },
 
     methods: {
-      fetchUserData() {
-       const userData = localStorage.getItem('userData'); // Retrieve user data from local storage
-      if (userData) {
+        fetchUserData() {
+      const userId = this.$route.params.id; 
 
-        try {
-        const parsedData = JSON.parse(userData);
+      const token = localStorage.getItem('token');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     
-        this.country = parsedData.country;
-        this.phone_number = parsedData.phone_number;
-        this.name = parsedData.name;
-        this.email = parsedData.email;
-        
-        this.user = JSON.parse(userData);
-      }catch (error) {
-        console.error('Error parsing user data:', error);
-      }
-
-        // console.log(userData.name);
-       
-      }
+      axios.get(`/api/edit-user/${userId}`)
+        .then(response => {
+            this.user = response.data;
+            this.name = this.user.name;
+            this.email = this.user.email;
+            this.phone_number = this.user.phone_number;
+            this.country = this.user.country;
+            this.profile = this.user.profile;
+            this.id = this.user.id;
+          
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
     handleProfilePictureChange(event) {
       this.profileImage = event.target.files[0];
    
   },
-    updateProfile(){
-     
-        const updateData = {
-          name: this.name,
-          email: this.email,
-          country: this.country,
-          phone_number: this.phone_number,
-        };
-        const token = localStorage.getItem('token');
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        const formData = new FormData();
-        formData.append('profile', this.profileImage);
-         axios.post('/api/updateProfile', formData, {
-            params: updateData
-          })
-        // axios.post('/api/updateProfile',formData)
-        .then(response=>{
-          this.profileImageUrl = response.data.profile;
-           toastr.success(response.data.message);
-       }).catch(error => {
-        toastr.error(error);
-       });
-    },
+    
    
     },
   };

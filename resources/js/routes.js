@@ -4,6 +4,8 @@ import Dashboard from './Component/pages/Dashboard.vue';
 import ViewUser from './Component/pages/users/ViewUser.vue';
 import addUser from './Component/pages/users/addUser.vue';
 import profile from './Component/pages/users/profile.vue';
+import EditUser from './Component/pages/users/EditUser.vue';
+import ShowUser from './Component/pages/users/ShowUser.vue';
 
 const routes = [
   {
@@ -39,6 +41,21 @@ const routes = [
     component: profile,
     meta: { requiresAuth: true },
   },
+  {
+    path: '/edit-user/:id',
+    name: 'EditUser',
+    component: EditUser,
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: '/show/:id',
+    name: 'ShowUser',
+    component: ShowUser,
+    meta: { requiresAuth: true },
+  },
+
+  
 
 
 ];

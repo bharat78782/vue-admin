@@ -138,11 +138,6 @@ export default {
         // Handle the successful registration
         this.showMessage('Registration successful!', true);
         this.clearFields();
-        // Redirect to the dashboard or login page
-        // this.$router.push('/dashboard'); 
-        // Replace '/dashboard' with the appropriate URL
-
-        // Optionally, you can store the user token or perform additional actions
       })
       .catch(error => {
         // Handle the registration error

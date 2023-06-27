@@ -40,7 +40,7 @@
                 </ul>
               </li>
 
-              <li class="nav-item" :class="{ 'menu-open': isMenuOpen(['/view-user','/add-user']) }" >
+              <li class="nav-item" :class="{ 'menu-open': isMenuOpen(['/view-user','/add-user','/edit-user']) }" >
                 <a href="#" class="nav-link" :class="{ active: isRouteActive(['/view-user','/add-user']) }">
                   <i class="nav-icon fas fa-tachometer-alt"></i>
                   <p>

@@ -11,7 +11,7 @@
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1 class="m-0">View User</h1>
+                <h1 class="m-0">Edit User</h1>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -29,12 +29,12 @@
             <div class="row">
               <div class="col-lg-12">
                 <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">Add User</h3>
-              </div>
+                <div class="card-header">
+                    <h3 class="card-title">Edit User</h3>
+                </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form id="quickForm" @submit.prevent="addUser()">
+              <form id="quickForm" @submit.prevent="UpdateUser()">
                 <div class="card-body">
 
                  <div class="form-group">
@@ -44,23 +44,6 @@
                     {{ formErrors.name }}
                   </div>
                   </div>
-
-                  <div class="form-group">
-                    <label for="exampleInputEmail1">Email address</label>
-                    <input type="email" name="email" class="form-control" v-model="email" id="email"  :class="{ 'is-invalid': formErrors.email }"  placeholder="Enter email">
-                    <div class="invalid-feedback" v-if="formErrors.email">
-                    {{ formErrors.email }}
-                  </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Password</label>
-                    <input type="password" name="password" v-model="password" class="form-control" :class="{ 'is-invalid': formErrors.password }"  id="password" placeholder="Password">
-                    
-                    <div class="invalid-feedback" v-if="formErrors.password">
-                    {{ formErrors.password }}
-                   </div>
-                 </div>
-
 
                   <div class="form-group">
                     <label for="exampleInputEmail1">Phone Number</label>
@@ -86,11 +69,19 @@
                   </div>
 
 
-                  <div class="form-group">
-                    <label for="exampleInputEmail1">Profile</label>
-                    <input type="file" class="form-control" @change="handleProfilePictureChange">
+                 <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                                <label for="exampleInputEmail1">Profile</label>
+                                <input type="file" class="form-control" @change="handleProfilePictureChange">
 
-                  </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <img :src="baseUrl + '/documents/profile/' + (profile ? profile : 'default-profile.png')" class="profile-user-img img-fluid img-circle" alt="User profile picture">
+
+                    </div>
+                 </div>
 
                 
                 </div>
@@ -126,19 +117,23 @@
     export default {
         data() {
             return {
-            profile: null,
+           
             name: '',
-            email: '',
-            password: '',
             phone_number: '',
             country: '',
             formErrors: {},
             message: '', // Store the success/error message
             success: false,
             profileImage: null,
+            user: null,
+            baseUrl: 'http://localhost/vuejs3/vue-admin/public/',
 
           
             };
+        },
+        created() {
+    // Fetch the user data
+            this.fetchUserData();
         },
         name: 'ViewUser',
         components: {
@@ -148,49 +143,63 @@
     
     },
       methods: {
-          onFileChange(event) {
-          this.profile = event.target.files[0];
-      },
+         
 
+        handleProfilePictureChange(event) {
+        this.profileImage = event.target.files[0];
+    
+        },
 
-      handleProfilePictureChange(event) {
-      this.profileImage = event.target.files[0];
-   
-  },
+     
 
-      addUser()
-      {
-        const addData = {
-          name: this.name,
-          email: this.email,
-          phone_number: this.phone_number,
-          country: this.country,
-          password: this.password,
+      fetchUserData() {
+      const userId = this.$route.params.id; // Get the user ID from the route parameter
+
+      const token = localStorage.getItem('token');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    
+      axios.get(`/api/edit-user/${userId}`)
+        .then(response => {
+            this.user = response.data;
+            this.name = this.user.name;
+            this.phone_number = this.user.phone_number;
+            this.country = this.user.country;
+            this.profile = this.user.profile;
+            this.id = this.user.id;
+          
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+    UpdateUser()
+    {
+        const updateData = {
+            id: this.id,
+            name:this.name,
+            phone_number:this.phone_number,
+            country:this.country,
         };
-
-       
+        const token = localStorage.getItem('token');
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         const formData = new FormData();
         formData.append('profile', this.profileImage);
-       
 
-        axios.post('/api/register', formData, {
-            params: addData
-          }).then(response=>{
-             this.clearFields();
-             toastr.success(response.data.message);
-             
+        axios.post('/api/update-user', formData, {
+            params: updateData
+          })
+
+        // axios.post('/api/update-user',formData)
+        .then(response=>{
+            toastr.success(response.data.message);
+            this.$router.push('/view-user');
         }).catch(error=>{
-          if (error.response && error.response.data && error.response.data.errors) {
-           
-            this.formErrors = error.response.data.errors;
-          } else if (error.response && error.response.data && error.response.data.message) {
-           
-            this.showMessage(error.response.data.message, false);
-          } else {
-            this.showMessage('Registration failed. Please try again.', false);
-          }
-        })
-      },
+            toastr.success(error.data.message);
+
+        });
+    },
+
       showMessage(message, success) {
       this.message = message;
       this.success = success;
@@ -200,14 +209,7 @@
         this.success = false;
       }, 5000); // Clear message after 5 seconds
     },
-    clearFields() {
-        this.name = '';
-        this.email = '';
-        this.password = '';
-        this.phone_number = '';
-        this.country = '';
-        
-      },
+ 
 
    
     },
