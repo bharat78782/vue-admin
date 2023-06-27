@@ -33,9 +33,9 @@
 <div class="card card-primary card-outline">
   <div class="card-body box-profile">
     <div class="text-center">
-      <img class="profile-user-img img-fluid img-circle"
-      :src="profileImageUrl"
-           alt="User profile picture">
+        <img class="profile-user-img img-fluid img-circle"
+        :src="baseUrl + '/documents/profile/' + (profile ? profile : 'default-profile.png')"
+            alt="User profile picture">
     </div>
 
     <h3 class="profile-username text-center">{{ user ? user.name : 'Loading...' }}</h3>
@@ -164,6 +164,7 @@
       phone_number: '',
       profileImage: null,
       profileImageUrl: '',
+      baseUrl: 'http://localhost/vuejs3/vue-admin/public/',
     };
   },
 
@@ -184,6 +185,7 @@
         this.phone_number = parsedData.phone_number;
         this.name = parsedData.name;
         this.email = parsedData.email;
+        this.profile = parsedData.profile;
         
         this.user = JSON.parse(userData);
       }catch (error) {

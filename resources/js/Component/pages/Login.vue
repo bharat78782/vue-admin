@@ -63,6 +63,8 @@
   
   <script>
     import axios from 'axios';
+    import toastr from 'toastr';
+    import 'admin-lte/plugins/toastr/toastr.css';
 
   export default {
     data() {
@@ -88,7 +90,7 @@
                   const { token, data } = response.data;
                     localStorage.setItem('token', token); 
                     localStorage.setItem('userData', JSON.stringify(data)); 
-              this.$router.push('/dashboard');
+                      this.$router.push('/dashboard');
               
             })
             .catch(error => {
@@ -97,9 +99,11 @@
                 if (error.response && error.response.data && error.response.data.errors) {
                     // If the server returns validation errors
                     this.formErrors = error.response.data.errors;
+                   
                 } else if (error.response && error.response.data && error.response.data.message) {
                     // If the server returns a custom error message
-                    this.showMessage(error.response.data.message, false);
+                    // this.showMessage(error.response.data.message, false);
+                    toastr.error(error.response.data.message);
                 } else {
                     this.showMessage('Registration failed. Please try again.', false);
                 }

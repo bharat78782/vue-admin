@@ -6,6 +6,7 @@ import addUser from './Component/pages/users/addUser.vue';
 import profile from './Component/pages/users/profile.vue';
 import EditUser from './Component/pages/users/EditUser.vue';
 import ShowUser from './Component/pages/users/ShowUser.vue';
+import Product from './Component/pages/products/Product.vue';
 
 const routes = [
   {
@@ -54,6 +55,13 @@ const routes = [
     component: ShowUser,
     meta: { requiresAuth: true },
   },
+
+  {
+    path: '/products',
+    name: 'Product',
+    component: Product,
+    meta: { requiresAuth: true },
+  }
 
   
 

@@ -8,5 +8,14 @@
 <script>
 export default {
   name: 'App',
+  mounted() {
+      this.redirectLogin();
+    },
+
+  methods: {
+    redirectLogin() {
+      this.$router.push('/login'); // Navigate to the register page
+      },
+  },
 };
 </script>
