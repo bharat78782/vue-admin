@@ -7,6 +7,7 @@ import profile from './Component/pages/users/profile.vue';
 import EditUser from './Component/pages/users/EditUser.vue';
 import ShowUser from './Component/pages/users/ShowUser.vue';
 import Product from './Component/pages/products/Product.vue';
+import Contact from './Component/pages/contact/Contact.vue';
 
 const routes = [
   {
@@ -60,6 +61,12 @@ const routes = [
     path: '/products',
     name: 'Product',
     component: Product,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: Contact,
     meta: { requiresAuth: true },
   }
 
