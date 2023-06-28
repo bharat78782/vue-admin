@@ -101,6 +101,7 @@
     import axios from 'axios';
     import toastr from 'toastr';
     import 'admin-lte/plugins/toastr/toastr.css';
+    import 'admin-lte/plugins/datatables/jquery.dataTables.js';
     
     
     export default {
@@ -175,6 +176,7 @@
    
    
   };
+  // $('#example1').DataTable();
   </script>
   
   <style scoped>

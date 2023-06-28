@@ -81,11 +81,47 @@
                       <p>Product List</p>
                     </router-link>
                   </li>
-
-                 
-
                 </ul>
               </li>
+
+
+              <li class="nav-item" :class="{ 'menu-open': isMenuOpen(['/add-color']) }" >
+                <a href="#" class="nav-link" :class="{ active: isRouteActive(['/add-color']) }">
+                  <i class="nav-icon fas fa-tachometer-alt"></i>
+                  <p>
+                    Color Management
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <router-link to="/add-color" class="nav-link" :class="{ active: isRouteActive(['/add-color']) }">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Add Color</p>
+                  </router-link>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="nav-item" :class="{ 'menu-open': isMenuOpen(['/size']) }" >
+                <a href="#" class="nav-link" :class="{ active: isRouteActive(['/size']) }">
+                  <i class="nav-icon fas fa-tachometer-alt"></i>
+                  <p>
+                    Size Management
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <router-link to="/size" class="nav-link" :class="{ active: isRouteActive(['/size']) }">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Size List</p>
+                  </router-link>
+                  </li>
+                </ul>
+              </li>
+            
+             
 
             </ul>
           </nav>
