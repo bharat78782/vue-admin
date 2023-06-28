@@ -7,6 +7,7 @@ import profile from './Component/pages/users/profile.vue';
 import EditUser from './Component/pages/users/EditUser.vue';
 import ShowUser from './Component/pages/users/ShowUser.vue';
 import Product from './Component/pages/products/Product.vue';
+import addProduct from './Component/pages/products/addProduct.vue';
 import Contact from './Component/pages/contact/Contact.vue';
 import AddColor from './Component/pages/colors/AddColor.vue';
 import Size from './Component/pages/sizes/Size.vue';
@@ -66,6 +67,14 @@ const routes = [
     component: Product,
     meta: { requiresAuth: true },
   },
+
+  {
+    path: '/add-product',
+    name: 'addProduct',
+    component: addProduct,
+    meta: { requiresAuth: true },
+  },
+
   {
     path: '/contact',
     name: 'contact',

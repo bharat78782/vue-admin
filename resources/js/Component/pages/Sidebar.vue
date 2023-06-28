@@ -66,8 +66,8 @@
                 </ul>
               </li>
 
-              <li class="nav-item" :class="{ 'menu-open': isMenuOpen(['/products']) }" >
-                <a href="#" class="nav-link" :class="{ active: isRouteActive(['/products']) }">
+              <li class="nav-item" :class="{ 'menu-open': isMenuOpen(['/products','/add-product']) }" >
+                <a href="#" class="nav-link" :class="{ active: isRouteActive(['/products','/add-product']) }">
                   <i class="nav-icon fas fa-tachometer-alt"></i>
                   <p>
                     Products Management
@@ -80,6 +80,14 @@
                       <i class="far fa-circle nav-icon"></i>
                       <p>Product List</p>
                     </router-link>
+
+                    <router-link to="/add-product" class="nav-link" :class="{ active: isRouteActive(['/add-product']) }">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Create Product</p>
+                    </router-link>
+
+                    
+
                   </li>
                 </ul>
               </li>
