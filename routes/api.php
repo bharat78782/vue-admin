@@ -6,6 +6,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\SizeController;
+use App\Http\Controllers\ProductController;
 
 
 /*
@@ -42,6 +43,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/sizes/destroy/{colorId}',  'destroy')->name('sizes.destroy');
         Route::get('/sizes/edit/{colorId}','edit')->name('sizes.edit');
         Route::patch('/sizes/update/{colorId}', 'update')->name('sizes.update');
+    });
+    Route::controller(ProductController::class)->group(function(){
+        Route::post('/products/store','store')->name('producst.store');
+        Route::get('/products/index', 'index')->name('products.index');
+        Route::delete('/products/destroy/{colorId}',  'destroy')->name('products.destroy');
+        Route::get('/products/edit/{colorId}','edit')->name('products.edit');
+        Route::patch('/products/update/{colorId}', 'update')->name('products.update');
     });
     
 

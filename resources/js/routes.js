@@ -8,6 +8,7 @@ import EditUser from './Component/pages/users/EditUser.vue';
 import ShowUser from './Component/pages/users/ShowUser.vue';
 import Product from './Component/pages/products/Product.vue';
 import addProduct from './Component/pages/products/addProduct.vue';
+import editProduct from './Component/pages/products/editProduct.vue';
 import Contact from './Component/pages/contact/Contact.vue';
 import AddColor from './Component/pages/colors/AddColor.vue';
 import Size from './Component/pages/sizes/Size.vue';
@@ -65,6 +66,13 @@ const routes = [
     path: '/products',
     name: 'Product',
     component: Product,
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: '/edit-product/:id',
+    name: 'editProduct',
+    component: editProduct,
     meta: { requiresAuth: true },
   },
 

@@ -55,7 +55,7 @@
                                     <td>active</td>
                                     <td>
                                         <a href="#!"  @click="deleteSize(size.id)" >Delete</a> &nbsp;
-                                        <a href="#!" @click="editSize(size.id)">edit</a>
+                                        <a href="" @click.prevent="editSize(size.id)">edit</a>
                                     </td>
                                 </tr>
                               
@@ -240,17 +240,20 @@
         });
     },
     editSize(colorId){
-      
+       
         const token = localStorage.getItem('token');
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        axios.get(`/api/sizes/edit/${colorId}`).then(response=>{
-           
+        axios.get(`/api/sizes/edit/${colorId}`)
+        
+        .then(response=>{
+            console.log(response.data)
           
+            
+            this.sizess = response.data;
+            this.size_name_one =  this.sizess.size_name_one;
+            this.size_name_two =  this.sizess.size_name_two;
+            this.size_id =  this.sizess.id;
             this.modalVisible = true; 
-            this.sizes = response.data;
-            this.size_name_one =  this.sizes.size_name_one;
-            this.size_name_two =  this.sizes.size_name_two;
-            this.size_id =  this.sizes.id;
            
            
         }).catch(error=>{

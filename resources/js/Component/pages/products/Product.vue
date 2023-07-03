@@ -32,35 +32,35 @@
                     <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Country</th>
+                    <th>Product Name</th>
+                    <th>Product Price</th>
+                    <th>Product Quantity</th>
+                    
                     <th>Image</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>asas</td>
-                      <td>asas</td>
-                      <td>asas</td>
-                      <td>asas</td>
+                    <tr v-for="product in products" :key="product.id">
+                      <td>{{ product.product_name }}</td>
+                      <td>{{ product.product_price }}</td>
+                      <td>{{ product.product_quantity }}</td>
+                      <td>{{ product.product_sku }}</td>
+                     
                       <td>
-                        asas
+                        <img  :src="baseUrl + 'documents/products/' + product.product_image"  class="profile-user-img img-fluid img-circle" alt="User profile picture">
                       </td>
-                      <td>asas</td>
                       <td>
                         <a class="btn btn-primary btn-sm" href="#" >
                           <i class="fas fa-folder"></i> View
                         </a>
                         &nbsp;
-                        <a class="btn btn-danger btn-sm" href="#" >
-                          <i class="fas fa-trash"></i> Delete
+                        <a class="btn btn-danger btn-sm" href="#!" @click="deleteProduct(product.id)">
+                          <i class="fas fa-trash"   ></i> Delete
                         </a>
                         &nbsp;
-                        <a class="btn btn-info btn-sm" href="#" >
+                        <a class="btn btn-info btn-sm" href="#"  @click="editProduct(product.id)">
                           <i class="fas fa-pencil-alt"></i> Edit
                         </a>
                       </td>
@@ -106,17 +106,58 @@
     },
     data() {
     return {
-      country: '',
-      phone_number: '',
-      profileImage: null,
-      profileImageUrl: '',
+      product_name: '',
+      product_price: '',
+      product_quantity: '',
+      product_sku: '',
+      status: '',
+      productImage: '',
+     
+      products:null,
+      baseUrl: 'http://localhost/vuejs3/vue-admin/public/'
     };
   },
 
-
+   mounted(){
+    const token = localStorage.getItem('token');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    this.viewProduct();
+   },
 
     methods: {
-  
+      viewProduct()
+      {
+        axios.get('/api/products/index').then(response=>{
+          console.log(response.data.data);
+          this.products = response.data.data;
+        }).catch(error=>{
+          
+        });
+      },
+      deleteProduct(productId){
+      
+        const confirmed = window.confirm('Are you sure you want to delete this product?');
+    
+        if (!confirmed) {
+          return; // If not confirmed, do nothing
+        }
+
+        const token = localStorage.getItem('token');
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        axios.delete(`/api/products/destroy/${productId}`).then(response=>{
+          if(response.data.success == true){
+            toastr.success(response.data.message);
+            this.viewProduct()
+          }else{
+            toastr.error(response.data.message);
+          }
+        }).catch(error=>{
+          toastr.error(error.response.data.message, false);
+        })
+      },
+      editProduct(productId){
+        this.$router.push({ name: 'editProduct', params: { id: productId } });
+      },
     },
   };
   </script>

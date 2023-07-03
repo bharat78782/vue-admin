@@ -32,7 +32,11 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form id="quickForm">
+              <div v-if="isLoading" class="loader-overlay">
+                <div class="loader"></div>
+              </div>
+              
+              <form id="quickForm" @submit.prevent="addProduct()">
                 <div class="card-body">
 
                   <div class="form-group">
@@ -57,36 +61,32 @@
 
                   <div class="form-group">
                     <label for="color_id">Colors</label>
-                    <select name="color_id" id="color_id" v-model="color_id" class="form-control">
-                        <option disabled selected>Select</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
+                    <select name="color_id" id="color_id" v-model="color_id" class="form-control" multiple>
+                        
+                        <option v-for="color in colors" :value="color.id" :key="color.id">{{ color.color_name }}</option>
                     </select>
                   </div>
 
                   <div class="form-group">
                     <label for="size_id">Size</label>
-                    <select name="size_id" id="size_id" v-model="size_id" class="form-control  select2" multiple>
-                        <option disabled selected>Select</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
-                  </div>
+                           <select name="size_id" id="size_id" v-model="size_id" class="form-control " multiple >
+                       
+                          <option v-for="size in sizes" :value="size.id" :key="size.id">{{ size.size_name_two }}</option>
+                
+                        </select>
+                        <div v-if="sizesLoading">Loading...</div>
+                    </div>
                   
 
                   <div class="form-group">
                     <label for="product_short_desc">Product Short description</label>
-                   <textarea name="product_short_desc" id="product_short_desc"  cols="5" rows="3" class="form-control"></textarea>
+                   <textarea name="product_short_desc" id="product_short_desc"  v-model="product_short_desc"   cols="5" rows="3" class="form-control"></textarea>
                   </div>
 
 
                   <div class="form-group">
                     <label for="product_long_desc">Product Long description</label>
-                   <textarea name="product_long_desc" id="product_long_desc"  cols="5" rows="6" class="form-control"></textarea>
+                   <textarea name="product_long_desc" id="product_long_desc"  v-model="product_long_desc"   cols="5" rows="6" class="form-control"></textarea>
                   </div>
 
 
@@ -96,16 +96,20 @@
                   <div class="form-group">
                     <label for="exampleInputEmail1">Product Image</label>
                     <input type="file" class="form-control" @change="handleProductImageChange">
+                 </div>
 
-                  </div>
+                 <div class="form-group">
+                    <label for="exampleInputEmail1">Product Multipe Image</label>
+                    <input type="file" class="form-control" @change="handleProductImageMultipeChange" multiple>
+                 </div>
 
-                
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
                   <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
               </form>
+            
             </div>
               </div>
              
@@ -127,12 +131,7 @@
     import toastr from 'toastr';
     import 'admin-lte/plugins/toastr/toastr.css';
 
-    // import  'admin-lte/plugins/jquery/jquery.js';
-    import $ from 'admin-lte/plugins/jquery/jquery.js';
-    window.$ = window.jQuery = $;
-    import 'admin-lte/plugins/select2/css/select2.css';
-    import 'admin-lte/plugins/select2/js/select2.js';
-    import 'admin-lte/plugins/select2/js/select2.full.js';
+   
     
     // window.jQuery = $;
     // window.$ = $;
@@ -142,28 +141,171 @@
         Sidebar,
         Navbar,
         Footers,
+        sizes: [], // Move the sizes declaration here
+        colors: null, // Move the sizes declaration here
     
     },
     data() {
     return {
-      country: '',
-      phone_number: '',
-      profileImage: null,
-      profileImageUrl: '',
+      product_name: '',
+      product_price: '',
+      product_quantity: '',
+      product_sku: '',
+      color_id: '',
+      size_id: [],
+      product_short_desc: '',
+      product_long_desc: '',
+      productImage: null,
+      productMultipeImage: null,
+      sizes: [], // Define as data property
+      colors: null, // Define as data property
+      isLoading: false,
     };
     },
     
     
-    mounted() {
-    //   $('#size_id').select2();
+   
 
-    //   $(this.$refs.selectElement).select2();
-    },
-    methods: {
+   created()
+   {
     
+    // this.addProduct();
+   
+   },
+  mounted(){
+    const token = localStorage.getItem('token');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    this.Size();
+    this.Colors();
+    
+  },
+
+    methods: {
+
+
+      handleProductImageChange(event) {
+          this.productImage = event.target.files[0];
+         
+      },
+
+      handleProductImageMultipeChange(event) {
+          // this.productMultipeImage = event.target.files[0];
+          this.productMultipeImage = event.target.files;
+
+         
+      },
+
+      Size() {
+      axios.get('/api/sizes/index')
+        .then(response => {
+          this.sizes = response.data.data.map((size) => ({
+            id: size.id,
+            size_name_two: size.size_name_two,
+          }));
+          console.log(this.sizes);
+        })
+        .catch(error => {
+          toastr.error(error.response, false);
+        });
+    },
+
+    Colors() {
+      axios.get('/api/colors/index')
+        .then(response => {
+          this.colors = response.data.data;
+          console.log(this.colors);
+        })
+        .catch(error => {
+          toastr.error(error.response, false);
+        });
+    },
+
+    addProduct(){
+      this.isLoading = true;
+      const addData = {
+       
+          product_name:this.product_name,
+          product_price: this.product_price,
+          product_quantity: this.product_quantity,
+          product_sku: this.product_sku,
+          color_id:  this.color_id,
+          size_id: this.size_id,
+          product_short_desc: this.product_short_desc,
+          product_long_desc: this.product_long_desc,
+      };
+      const formData = new FormData();
+      formData.append('product_image', this.productImage);
+      // formData.append('image', this.productMultipeImage);
+
+      if (this.productMultipeImage && this.productMultipeImage.length > 0) {
+        for (let i = 0; i < this.productMultipeImage.length; i++) {
+          formData.append('images[]', this.productMultipeImage[i]);
+          
+        }
+    }  
+        const token = localStorage.getItem('token');
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+        axios.post('/api/products/store',formData, {
+            params: addData
+          }).then(response=>{
+          
+             toastr.success(response.data.message);
+             this.clearFields();
+             this.isLoading = false;
+             
+        }).catch(error=>{
+          this.isLoading = false;
+            toastr.error(error.response.data.message, false);
+        })
+    },
+
+    clearFields() {
+      this.product_name = '';
+      this.product_price = '';
+      this.product_quantity = '';
+      this.product_sku = '';
+      this.color_id = [];
+      this.size_id = [];
+      this.product_short_desc = '';
+      this.product_long_desc = '';
+      this.productImage = null;
+      this.productMultipeImage = null;
+    },
+  
+  
+       
     },
     };
  </script>
  <style scoped>
-    /* Add component-specific styles here */
+    .loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
  </style>
