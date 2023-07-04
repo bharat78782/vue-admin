@@ -80,7 +80,8 @@ class ProductController extends Controller
                         ProductSize::create(['size_id' => $size_id, 'product_id' => $addProduct->id]);
                     }
 
-                    if (count($request->file('images')) > 0) {
+                    // if (count($request->file('images')) > 0) {
+                    if ($request->hasFile('images')) {
                         $images = $request->file('images');
                         foreach ($images as $image) {
                             if ($image->isValid()) {
@@ -107,7 +108,7 @@ class ProductController extends Controller
  
     public function show($id)
     {
-        //
+        return Product::find($id);
     }
 
     /**
@@ -118,7 +119,9 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        return Product::with(['colors','sizes','images'])
+         ->whereHas('colors')->whereHas('sizes')->whereHas('images')
+        ->find($id);
     }
 
     /**

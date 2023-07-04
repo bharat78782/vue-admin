@@ -20,9 +20,9 @@ use App\Http\Controllers\DashboardController;
 //     return view('welcome');
 // });
 
-Route::get('/{vue_capture?}', function() {
+Route::get('/{any}', function() {
     return view('welcome');
-})->where('vue_capture', '[\/\w\.-]*');
+})->where('any', '.*');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::post('/register', [UserController::class, 'register'])->name('register');

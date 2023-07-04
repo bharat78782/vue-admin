@@ -47,9 +47,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(ProductController::class)->group(function(){
         Route::post('/products/store','store')->name('producst.store');
         Route::get('/products/index', 'index')->name('products.index');
-        Route::delete('/products/destroy/{colorId}',  'destroy')->name('products.destroy');
-        Route::get('/products/edit/{colorId}','edit')->name('products.edit');
-        Route::patch('/products/update/{colorId}', 'update')->name('products.update');
+        Route::delete('/products/destroy/{productId}',  'destroy')->name('products.destroy');
+        Route::get('/products/edit/{productId}','edit')->name('products.edit');
+        Route::patch('/products/update/{productId}', 'update')->name('products.update');
     });
     
 

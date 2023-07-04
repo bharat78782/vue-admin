@@ -15,6 +15,7 @@ import App from './Component/App.vue';
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  // routes: [...],
 });
 
 router.beforeEach((to, from, next) => {

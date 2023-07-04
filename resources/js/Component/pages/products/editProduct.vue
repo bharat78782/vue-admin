@@ -8,7 +8,7 @@
              <div class="container-fluid">
                 <div class="row mb-2">
                    <div class="col-sm-6">
-                      <h4>Create Products</h4>
+                      <h4>Edit Products</h4>
                    </div>
                    <div class="col-sm-6">
                       <ol class="breadcrumb float-sm-right">
@@ -28,7 +28,7 @@
               <div class="col-lg-12">
                 <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title">Create Product</h3>
+                <h3 class="card-title">Edit Product</h3>
               </div>
               <!-- /.card-header -->
               <!-- form start -->
@@ -36,7 +36,7 @@
                 <div class="loader"></div>
               </div>
               
-              <form id="quickForm" @submit.prevent="addProduct()">
+              <form id="quickForm" >
                 <div class="card-body">
 
                   <div class="form-group">
@@ -62,18 +62,18 @@
                   <div class="form-group">
                     <label for="color_id">Colors</label>
                     <select name="color_id" id="color_id" v-model="color_id" class="form-control" multiple>
-                        
+                      <option v-for="color in colors" :value="color.id" :key="color.id">{{ color.color_name }}</option>
+
                        
                     </select>
                   </div>
 
                   <div class="form-group">
                     <label for="size_id">Size</label>
-                           <select name="size_id" id="size_id" v-model="size_id" class="form-control " multiple >
-                       
-                         
-                
-                        </select>
+                           <select name="size_id" id="size_id" v-model="size_id" class="form-control"  multiple>
+                            <option v-for="product_size in size" :value="product_size.id" :key="product_size.id" :selected="product_size.id === selectedSize">{{ product_size.size_name_two }}</option>
+
+                          </select>
                        
                     </div>
                   
@@ -92,11 +92,22 @@
 
 
         
+                  <div class="col-md-6">
+                        <img :src="baseUrl + '/documents/products/' + (productImage ? productImage : 'default-profile.png')" class="profile-user-img img-fluid img-circle" alt="User profile picture">
+
+                  </div>
 
                   <div class="form-group">
                     <label for="exampleInputEmail1">Product Image</label>
                     <input type="file" class="form-control" @change="handleProductImageChange">
                  </div>
+
+                 <div class="col-md-6">
+                    <div v-for="(image, index) in images" :key="index">
+                        <img :src="baseUrl + '/documents/products/' + image.image" alt="Product Image"  class="product-image">
+                      </div>
+
+                  </div>
 
                  <div class="form-group">
                     <label for="exampleInputEmail1">Product Multipe Image</label>
@@ -141,27 +152,72 @@
         Sidebar,
         Navbar,
         Footers,
-        sizes: [], // Move the sizes declaration here
-        colors: null, // Move the sizes declaration here
+       
     
     },
     data() {
-    return {
-        product_name: '',
-        product_price: '',
-        product_quantity: '',
-        product_sku: '',
-        color_id: '',
-        size_id: [],
-        product_short_desc: '',
-        product_long_desc: '',
-        productImage: null,
-        productMultipeImage: null,
-        sizes: [], // Define as data property
-        colors: null, // Define as data property
-        isLoading: false,
-    };
+      return {
+          product_name: '',
+          product_price: '',
+          product_quantity: '',
+          product_sku: '',
+          color_id: '',
+          size_id: [],
+          product_short_desc: '',
+          product_long_desc: '',
+          productImage: null,
+          productMultipeImage: null,
+          size:null, // Define as data property
+          colors: null, // Define as data property
+          images: null, // Define as data property
+          isLoading: false,
+          products:null,
+          selectedSize:null,
+          baseUrl: 'http://localhost/vuejs3/vue-admin/public',
+      };
     },
+      mounted(){
+        this.editProduct();
+        this.getSize();
+      },
+
+        methods:{
+          editProduct(){
+            const productId = this.$route.params.id; 
+            
+              axios.get(`/api/products/edit/${productId}`).then(response=>{
+                
+                this.products=response.data;
+                this.product_name = response.data.product_name;
+                this.product_price = response.data.product_price;
+                this.product_quantity = response.data.product_quantity;
+                this.product_sku = response.data.product_sku;
+                this.product_short_desc = response.data.product_short_desc;
+                this.product_long_desc = response.data.product_long_desc;
+                this.productImage = response.data.product_image;
+                this.size = response.data.sizes;
+                this.colors = response.data.colors;
+                this.images = Object.values(response.data.images);
+                
+                this.getSize();
+              
+              }).catch(error=>{
+              
+              });
+          },
+          getSize(){
+            axios.get(`/api/sizes/index`).then(response=>{
+              const sizes = response.data.data;
+              const selectedSize = sizes.find(size => size.id === this.products.sizes.pivot.size_id); // Use the correct property for size_id
+              this.selectedSize = selectedSize ? selectedSize.id : null;
+              console.log( sizes);
+            }).catch(error=>{
+              // console.log(error);
+            });
+          },
+
+          
+        },
     
     
   
@@ -169,7 +225,7 @@
     };
  </script>
  <style scoped>
-    .loader-overlay {
+  .loader-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -188,6 +244,9 @@
   width: 60px;
   height: 60px;
   animation: spin 2s linear infinite;
+}
+.product-image {
+  width: 150px;
 }
 
 @keyframes spin {
